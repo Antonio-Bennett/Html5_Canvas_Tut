@@ -90,10 +90,12 @@ const get_random = (num, negatives = false) => {
     ANIMATING CANVAS
 */
 
-const Circle = (x, y) => {
+const Circle = (x, y, radius, dx, dy) => {
   return {
     x,
     y,
+    dx,
+    dy,
     draw() {
       context.beginPath();
       context.arc(x, y, radius, 2 * Math.PI, false);
@@ -106,30 +108,36 @@ const Circle = (x, y) => {
 
       x += dx;
       y += dy;
+
+      this.draw();
     },
   };
 };
 
-const circle = Circle(200, 200);
+// let x = get_random(canvas.width); //starting x position
+// let y = get_random(canvas.height); //starting y position
+// let dx = get_random(8, true); //The 'speed' this is the amount added or subtracted from x per frame
+// let dy = get_random(8, true); //The 'speed' this is the amount added or subtracted from y per frame
+// let radius = 30; //Self explanatory but it's the radius of the circle
 
-let x = get_random(canvas.width); //starting x position
-let y = get_random(canvas.height); //starting y position
-let dx = get_random(8, true); //The 'speed' this is the amount added or subtracted from x per frame
-let dy = get_random(8, true); //The 'speed' this is the amount added or subtracted from y per frame
-let radius = 30; //Self explanatory but it's the radius of the circle
+let circleArray = [];
+let radius = 30;
+for (let i = 0; i < 100; i++) {
+  circleArray.push(
+    Circle(
+      get_random(canvas.width - radius * 2) + 30, //This like saying if w is 10 and r is 2 generate up to 6 then add 2 so x would be 2-8
+      get_random(canvas.height - radius * 2) + 30, //Same logic as ^^^ but for y
+      radius,
+      get_random(1, true),
+      get_random(1, true)
+    )
+  );
+}
 
 const animate = () => {
   requestAnimationFrame(animate);
   context.clearRect(0, 0, canvas.width, canvas.height);
-
-  circle.draw();
-
-  context.beginPath();
-  context.arc(x, y, radius, 2 * Math.PI, false);
-  context.strokeStyle = "blue";
-  context.stroke();
-
-  circle.update();
+  for (const circle of circleArray) circle.update();
 };
 
 animate();
